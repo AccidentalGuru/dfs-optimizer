@@ -6,10 +6,10 @@ module.exports = {
   // the base directory (absolute path) for resolving the entry option
   context: __dirname,
   // the entry point of the react application
-  entry: './static/js/index',
+  entry: './app/static/js/index',
   output: {
     // where you want your compiled bundle to be stored
-    path: path.resolve('./static/bundles/'),
+    path: path.resolve('./app/static/'),
     filename: 'bundle.js',
   },
   plugins: [

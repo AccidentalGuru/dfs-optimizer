@@ -104,5 +104,5 @@ ENV/
 node_modules/
 
 # excluded by me
+app.db
 data/
-connection.py
