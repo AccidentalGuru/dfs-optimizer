@@ -1,11 +1,8 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-//var $ = require('jquery');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Main from './Main';
 
-var Hello = class Welcome extends React.Component {
-  render() {
-    return <h1>Hello, React</h1>;
-  }
-};
-
-ReactDOM.render(<Hello />, document.getElementById('content'));
+ReactDOM.render(
+  <Main/>,
+  document.getElementById('root')
+);

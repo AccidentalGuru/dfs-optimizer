@@ -1,8 +1,8 @@
-"""users, players, teams tables
+"""initial migration
 
-Revision ID: 06227063c5cd
+Revision ID: 5d75bf78c793
 Revises: 
-Create Date: 2018-07-18 23:31:19.666732
+Create Date: 2018-07-23 14:40:40.751984
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '06227063c5cd'
+revision = '5d75bf78c793'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -27,9 +27,10 @@ def upgrade():
     op.create_index(op.f('ix_team_abrev'), 'team', ['abrev'], unique=True)
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('username', sa.String(length=64), nullable=True),
-    sa.Column('email', sa.String(length=120), nullable=True),
-    sa.Column('password_hash', sa.String(length=128), nullable=True),
+    sa.Column('username', sa.String(length=255), nullable=True),
+    sa.Column('email', sa.String(length=255), nullable=True),
+    sa.Column('password_hash', sa.String(length=255), nullable=True),
+    sa.Column('registered_on', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
