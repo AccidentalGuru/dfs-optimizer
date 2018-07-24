@@ -4,18 +4,45 @@ import jwt
 from app import db
 
 
-class User(db.Model):
+class PaginatedAPIMixin(object):
+    @staticmethod
+    def to_collection_dict(query, page, per_page, endpoint, **kwargs):
+        resources = query.paginate(page, per_page, False)
+        data = {
+            'items': [item.to_dict() for item in resources.items],
+            '_meta': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages': resources.pages,
+                'total_items': resources.total
+            },
+            '_links': {
+                'self': url_for(endpoint, page=page, per_page=per_page,
+                                **kwargs),
+                'next': url_for(endpoint, page=page + 1, per_page=per_page,
+                                **kwargs) if resources.has_next else None,
+                'prev': url_for(endpoint, page=page - 1, per_page=per_page,
+                                **kwargs) if resources.has_prev else None
+            }
+        }
+        return data
+
+
+class User(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), index=True, unique=True)
     email = db.Column(db.String(255), index=True, unique=True)
     password_hash = db.Column(db.String(255))
     registered_on = db.Column(db.DateTime)
 
-    def __init__(self, username, email, password):
+    def __init__(self, username=None, email=None, password=None):
+        self.registered_on = datetime.datetime.utcnow()
+        
+        if username is None or email is None or password is None:
+            return
         self.username = username
         self.email = email
         self.password_hash = self.set_password(password)
-        self.registered_on = datetime.datetime.now()
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -25,6 +52,25 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+    def to_dict(self, include_email=False):
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'registered_on': self.registered_on.isoformat() + 'Z'
+        }
+
+        if include_email:
+            data['email'] = self.email
+
+        return data
+
+    def from_dict(self, data, new_user=False):
+        for field in ['username', 'email']:
+            if field in data:
+                setattr(self, field, data[field])
+        if new_user and 'password' in data:
+            self.set_password(data['password'])
 
     def encode_auth_token(self, user_id):
         try:
