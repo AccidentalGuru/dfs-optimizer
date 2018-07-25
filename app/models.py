@@ -30,28 +30,22 @@ class PaginatedAPIMixin(object):
 
 class User(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), index=True, unique=True)
-    email = db.Column(db.String(255), index=True, unique=True)
-    password_hash = db.Column(db.String(255))
-    registered_on = db.Column(db.DateTime)
+    username = db.Column(db.String(255), index=True, unique=True, nullable=False)
+    email = db.Column(db.String(255), index=True, unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    registered_on = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, username=None, email=None, password=None):
-        self.registered_on = datetime.datetime.utcnow()
-        
-        if username is None or email is None or password is None:
-            return
+    def __init__(self, username, email, password):
         self.username = username
         self.email = email
-        self.password_hash = self.set_password(password)
+        self.password_hash = generate_password_hash(password)
+        self.registered_on = datetime.datetime.utcnow()
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
-
     def check_password(self, password):
-        return check_password_hash(self.password, password)
+        return check_password_hash(self.password_hash, password)
 
     def to_dict(self, include_email=False):
         data = {
