@@ -1,3 +1,4 @@
+from flask import url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 import datetime
 import jwt
@@ -59,12 +60,12 @@ class User(PaginatedAPIMixin, db.Model):
 
         return data
 
-    def from_dict(self, data, new_user=False):
-        for field in ['username', 'email']:
-            if field in data:
-                setattr(self, field, data[field])
-        if new_user and 'password' in data:
-            self.set_password(data['password'])
+    def from_dict(self, data):
+         for field in ['username', 'email']:
+             if field in data:
+                 setattr(self, field, data[field])
+         if 'password' in data:
+             setattr(self, 'password_hash', generate_password_hash(data['password']))
 
     def encode_auth_token(self, user_id):
         try:
