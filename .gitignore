@@ -103,6 +103,7 @@ ENV/
 # node modules
 node_modules/
 
-# excluded by me
+# exclude dev database, excel data and logs
 app.db
 data/
+logs/
