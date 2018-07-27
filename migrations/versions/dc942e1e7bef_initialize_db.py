@@ -1,8 +1,8 @@
-"""initial migration
+"""initialize db
 
-Revision ID: 5d75bf78c793
+Revision ID: dc942e1e7bef
 Revises: 
-Create Date: 2018-07-23 14:40:40.751984
+Create Date: 2018-07-27 14:34:52.041615
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5d75bf78c793'
+revision = 'dc942e1e7bef'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -27,13 +27,16 @@ def upgrade():
     op.create_index(op.f('ix_team_abrev'), 'team', ['abrev'], unique=True)
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('username', sa.String(length=255), nullable=True),
-    sa.Column('email', sa.String(length=255), nullable=True),
-    sa.Column('password_hash', sa.String(length=255), nullable=True),
-    sa.Column('registered_on', sa.DateTime(), nullable=True),
+    sa.Column('username', sa.String(length=255), nullable=False),
+    sa.Column('email', sa.String(length=255), nullable=False),
+    sa.Column('password_hash', sa.String(length=255), nullable=False),
+    sa.Column('registered_on', sa.DateTime(), nullable=False),
+    sa.Column('token', sa.String(length=32), nullable=True),
+    sa.Column('token_expiration', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
+    op.create_index(op.f('ix_user_token'), 'user', ['token'], unique=True)
     op.create_index(op.f('ix_user_username'), 'user', ['username'], unique=True)
     op.create_table('player',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -54,6 +57,7 @@ def downgrade():
     op.drop_index(op.f('ix_player_name'), table_name='player')
     op.drop_table('player')
     op.drop_index(op.f('ix_user_username'), table_name='user')
+    op.drop_index(op.f('ix_user_token'), table_name='user')
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_table('user')
     op.drop_index(op.f('ix_team_abrev'), table_name='team')
