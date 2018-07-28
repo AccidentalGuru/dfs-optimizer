@@ -1,7 +1,7 @@
 from flask import jsonify, request, url_for
 from app import db
 from app.api import bp
-from app.auth.auth import token_auth
+from app.api.auth import token_auth
 from app.api.errors import bad_request
 from app.models import User
 
@@ -19,6 +19,7 @@ def get_users():
     per_page = min(request.args.get('per_page', 10, type=int), 100)
     data = User.to_collection_dict(User.query, page, per_page, 'api.get_users')
     return jsonify(data)
+
 
 @bp.route('/users', methods=['POST'])
 def create_user():
@@ -38,6 +39,7 @@ def create_user():
     response.status_code = 201
     response.headers['Location'] = url_for('api.get_user', id=user.id)
     return response
+
 
 @bp.route('/users/<int:id>', methods=['PUT'])
 @token_auth.login_required
