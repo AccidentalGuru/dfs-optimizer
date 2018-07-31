@@ -98,15 +98,60 @@ class Player(db.Model):
     name = db.Column(db.String(32), index=True)
     position = db.Column(db.String(2), index=True) # qb, rb, wr, te, k
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
+    game_stats = db.relationship('Player_Game_Stats', backref='player', lazy='dynamic')
 
     def __repr__(self):
         return '<Player {} {}>'.format(self.position, self.name)
+
+
+class Player_Game_Stats(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    player_id = db.Column(db.Integer, index=True)
+    season = db.Column(db.Integer)
+    week = db.Column(db.Integer)
+    dropbacks = db.Column(db.Integer)
+    attempts = db.Column(db.Integer)
+    aimed = db.Column(db.Integer)
+    completions = db.Column(db.Integer)
+    passing_yds = db.Column(db.Integer)
+    passing_tds = db.Column(db.Integer)
+    passing_adot = db.Column(db.Float)  # average depth of target as passer
+    interceptions = db.Column(db.Integer)
+    sacks = db.Column(db.Integer)
+    completion_percentage = db.Column(db.Float)
+    adjusted_completion_percentage = db.Column(db.Float)
+    carries = db.Column(db.Integer)
+    rushing_yards = db.Column(db.Integer)
+    rushing_tds = db.Column(db.Integer)
+    rushing_fumbles = db.Column(db.Integer)
+    yds_per_carry = db.Column(db.Float)
+    yds_after_contact = db.Column(db.Float)  # per carry
+    tackles_avoided = db.Column(db.Integer)
+    tackles_avoided_per_attempt = db.Column(db.Float)
+    targets = db.Column(db.Integer)
+    receptions = db.Column(db.Integer)
+    receiving_yds = db.Column(db.Integer)
+    receiving_tds = db.Column(db.Integer)
+    receiving_fumbles = db.Column(db.Integer)
+    receiving_adot = db.Column(db.Float)  # average depth of target as receiver
+    drops = db.Column(db.Integer)
+    catch_percentage = db.Column(db.Float)
+    yds_per_reception = db.Column(db.Float)
+    yds_per_target = db.Column(db.Float)
+    receiving_yds_after_catch = db.Column(db.Float)  # per catch
+    fantasy_points_standard = db.Column(db.Integer)
+    fantasy_points_ppr = db.Column(db.Integer)
+
+
+    def stats_from_dict(self, data):
+        pass
 
 
 class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32))
     abrev = db.Column(db.String(3), index=True, unique=True)
+    players = db.relationship('Player', backref='team', lazy='dynamic')
 
     def __repr__(self):
         return '<Team {}>'.format(self.name)
