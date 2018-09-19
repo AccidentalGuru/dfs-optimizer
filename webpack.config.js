@@ -31,6 +31,10 @@ module.exports = {
           //specify that we will be dealing with React code
           presets: ['react']
         }
+      },
+      {
+        test:/\.css$/,
+        use:['css-loader']
       }
     ]
   },

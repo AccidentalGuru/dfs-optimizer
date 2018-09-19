@@ -1,58 +1,71 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React, { Component } from 'react';
+import '../css/Login.css';
+import AuthService from './AuthService';
 
-class LoginForm extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      email: '',
-      password: '',
-      rememberMe: false,
-    };
-
+class Login extends Component {
+  constructor() {
+    super();
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.Auth = new AuthService();
   }
 
-  handleChange(event) {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-
-    this.setState({
-      [name]: value
-    });
+  componentWillMount() {
+    if (this.Auth.loggedIn()) {
+      this.props.history.replace('/');
+    }
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
-    $.post('/login', {
-      email: this.state.email,
-      password: this.state.password,
-      rememberMe: this.state.rememberMe,
+  handleChange(e) {
+    this.setState(
+      {
+        [e.target.name]: e.target.value
+      }
+    )
+  }
+
+  handleFormSubmit(e) {
+    e.preventDefault();
+
+    this.Auth.login(this.state.username, this.state.password)
+    .then(res => {
+      this.props.history.replace('/');
+    })
+    .catch(err => {
+      alert(err);
     });
   }
 
   render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Email:
-          <input name="email" type="text" value={this.state.email} onChange={this.handleChange} />
-        </label>
-        <label>
-          Password:
-          <input name="password" type="password" value={this.state.password} onChange={this.handleChange} />
-        </label>
-        <label>
-          Remember Me:
-          <input name="rememberMe" type="checkbox" value={this.state.rememberMe} onChange={this.handleChange} />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-    );
-  }
+        return (
+            <div className="center">
+              <div className="card">
+                <h1>Login</h1>
+                <form>
+                  <input
+                    className="form-item"
+                    placeholder="Username goes here..."
+                    name="username"
+                    type="text"
+                    onChange={this.handleChange}
+                  />
+                  <input
+                    className="form-item"
+                    placeholder="Password goes here..."
+                    name="password"
+                    type="password"
+                    onChange={this.handleChange}
+                  />
+                  <input
+                    className="form-item"
+                    value="SUBMIT"
+                    type="submit"
+                  />
+                </form>
+              </div>
+            </div>
+        );
+    }
 }
 
-ReactDOM.render(<LoginForm />, document.getElementById('content'));
+export default Login;

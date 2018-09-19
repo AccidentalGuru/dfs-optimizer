@@ -1,33 +1,43 @@
 import React, { Component } from 'react';
-import {
-  Route,
-  NavLink,
-  BrowserRouter
-} from 'react-router-dom';
+import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 import Home from './Home';
-import Stuff from './Stuff';
-import Contact from './Contact';
+import Login from './Login';
+import AuthService from './AuthService';
+import withAuth from './withAuth';
+const Auth = new AuthService();
 
 class Main extends Component {
   render() {
     return (
-      <BrowserRouter>
+      <Router>
         <div>
           <h1>Simple SPA</h1>
           <ul className='header'>
             <li><NavLink exact to='/'>Home</NavLink></li>
-            <li><NavLink to='/stuff'>Stuff</NavLink></li>
-            <li><NavLink to='/contact'>Contact</NavLink></li>
+            <li><NavLink to='/login'>Login</NavLink></li>
+            <li>
+              <button
+                type="button"
+                className="form-submit"
+                onClick={this.handleLogout.bind(this)}>
+                Logout
+              </button>
+            </li>
           </ul>
           <div className='content'>
             <Route exact path='/' component={Home}/>
-            <Route path='/stuff' component={Stuff}/>
-            <Route path='/contact' component={Contact}/>
+            <Route exact path='/login' component={Login}/>
           </div>
         </div>
-      </BrowserRouter>
+      </Router>
     );
   }
+
+  handleLogout() {
+    Auth.logout()
+    this.props.history.replace('/login');
+  }
+
 }
  
-export default Main;
+export default withAuth(Main);
