@@ -12,8 +12,11 @@ export default class AuthService {
     login(username, password) {
         // Get a token from api server using jquery
         return this.fetch(`${this.domain}/login`, {
-            username: username,
-            password: password
+            method: 'POST',
+            data: {
+                username: username,
+                password: password
+            }
         }).then(res => {
             this.setToken(res.token) // Setting the token in localStorage
             return Promise.resolve(res);
@@ -74,13 +77,15 @@ export default class AuthService {
             headers['Authorization'] = 'Bearer ' + this.getToken()
         }
 
-        return $.post(`${this.domain}/login`, {
-            username: options.username,
-            password: options.password
+        return $.ajax({
+          url: url,
+          method: options.method,
+          data: options.data
         })
         .then(this._checkStatus)
         .then(response => response.json());
     }
+    
     _checkStatus(response) {
         // raises an error in case response status is not a success
         if (response.status >= 200 && response.status < 300) { // Success status lies between 200 to 300

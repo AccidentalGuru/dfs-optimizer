@@ -6,7 +6,7 @@ module.exports = {
   // the base directory (absolute path) for resolving the entry option
   context: __dirname,
   // the entry point of the react application
-  entry: './app/static/js/index',
+  entry: './app/static/index',
   output: {
     // where you want your compiled bundle to be stored
     path: path.resolve('./app/static/'),
@@ -34,7 +34,7 @@ module.exports = {
       },
       {
         test:/\.css$/,
-        use:['css-loader']
+        use:['style-loader', 'css-loader']
       }
     ]
   },
