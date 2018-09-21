@@ -36,7 +36,7 @@ export default class AuthService {
                 return true;
             }
             else
-                return false;
+            return false;
         }
         catch (err) {
             return false;
@@ -65,7 +65,7 @@ export default class AuthService {
 
 
     fetch(url, options) {
-      // performs api calls sending the required authentication headers
+        // performs api calls sending the required authentication headers
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -78,14 +78,14 @@ export default class AuthService {
         }
 
         return $.ajax({
-          url: url,
-          method: options.method,
-          data: options.data
+            url: url,
+            method: options.method,
+            data: options.data
         })
         .then(this._checkStatus)
         .then(response => response.json());
     }
-    
+
     _checkStatus(response) {
         // raises an error in case response status is not a success
         if (response.status >= 200 && response.status < 300) { // Success status lies between 200 to 300

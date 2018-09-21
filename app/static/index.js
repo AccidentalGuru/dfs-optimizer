@@ -1,8 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Main from './components/Main';
+import { Route, BrowserRouter as Router } from 'react-router-dom';
+import App from './components/App';
+import Login from './components/Login';
 
 ReactDOM.render(
-  <Main/>,
-  document.getElementById('root')
+    <Router>
+        <div>
+            <Route exact path='/' component={App} />
+            <Route exact path='/login' component={Login} />
+        </div>
+    </Router>,
+    document.getElementById('root')
 );
