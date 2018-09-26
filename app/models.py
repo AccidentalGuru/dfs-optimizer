@@ -1,9 +1,8 @@
-from flask import url_for
-from werkzeug.security import check_password_hash, generate_password_hash
-import base64
+from flask import current_app, url_for
+import jwt
 from datetime import datetime, timedelta
 import os
-from app import db
+from app import bcrypt, db
 
 
 class PaginatedAPIMixin(object):
@@ -31,66 +30,58 @@ class PaginatedAPIMixin(object):
 
 
 class User(PaginatedAPIMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(255), index=True, unique=True, nullable=False)
     email = db.Column(db.String(255), index=True, unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     registered_on = db.Column(db.DateTime, nullable=False)
-    token = db.Column(db.String(32), index=True, unique=True)
-    token_expiration = db.Column(db.DateTime)
+    admin = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, username, email, password):
+    def __init__(self, username, email, password, admin=False):
         self.username = username
         self.email = email
-        self.password_hash = generate_password_hash(password)
+        self.password = bcrypt.generate_password_hash(
+            password, current_app.config['BCRYPT_LOG_ROUNDS']
+        ).decode()
         self.registered_on = datetime.utcnow()
+        self.admin = admin
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-    def to_dict(self, include_email=False):
-        data = {
-            'id': self.id,
-            'username': self.username,
-            'registered_on': self.registered_on.isoformat() + 'Z'
-        }
-
-        if include_email:
-            data['email'] = self.email
-
-        return data
-
-    def from_dict(self, data):
-         for field in ['username', 'email']:
-             if field in data:
-                 setattr(self, field, data[field])
-
-         if 'password' in data:
-             setattr(self, 'password_hash', generate_password_hash(data['password']))
-
-    def get_token(self, expires_in=3600):
-        now = datetime.utcnow()
-
-        if self.token and self.token_expiration > now + timedelta(seconds=60):
-            return self.token
-
-        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
-        self.token_expiration = now + timedelta(seconds=expires_in)
+    def save_to_db(self):
         db.session.add(self)
-        return self.token
+        db.session.commit()
 
-    def revoke_token(self):
-        self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
+    @classmethod
+    def find_by_username(cls, username):
+        return cls.query.filter_by(username=username).first()
+
+    def encode_auth_token(self, user_id):
+        try:
+            payload = {
+                'exp': datetime.utcnow() + timedelta(days=0, seconds=5),
+                'iat': datetime.utcnow(),
+                'sub': user_id
+            }
+
+            return jwt.encode(
+                payload,
+                current_app.config['SECRET_KEY'],
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
 
     @staticmethod
-    def check_token(token):
-        user = User.query.filter_by(token=token).first()
-        if user is None or user.token_expiration < datetime.utcnow():
-            return None
-        return user
+    def decode_auth_token(auth_token):
+        try:
+            payload = jwt.decode(auth_token, current_app.config['SECRET_KEY'])
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
 
 
 class Player(db.Model):
@@ -104,9 +95,19 @@ class Player(db.Model):
         return '<Player {} {}>'.format(self.position, self.name)
 
 
+class Team(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32))
+    abrev = db.Column(db.String(3), index=True, unique=True)
+    players = db.relationship('Player', backref='team', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Team {}>'.format(self.name)
+
+
 class Player_Game_Stats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    player_id = db.Column(db.Integer, index=True)
+    player_id = db.Column(db.Integer, db.ForeignKey('player.id'))
     season = db.Column(db.Integer)
     week = db.Column(db.Integer)
     dropbacks = db.Column(db.Integer)
@@ -145,13 +146,3 @@ class Player_Game_Stats(db.Model):
 
     def stats_from_dict(self, data):
         pass
-
-
-class Team(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32))
-    abrev = db.Column(db.String(3), index=True, unique=True)
-    players = db.relationship('Player', backref='team', lazy='dynamic')
-
-    def __repr__(self):
-        return '<Team {}>'.format(self.name)
