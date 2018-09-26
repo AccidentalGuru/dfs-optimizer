@@ -5,31 +5,7 @@ import os
 from app import bcrypt, db
 
 
-class PaginatedAPIMixin(object):
-    @staticmethod
-    def to_collection_dict(query, page, per_page, endpoint, **kwargs):
-        resources = query.paginate(page, per_page, False)
-        data = {
-            'items': [item.to_dict() for item in resources.items],
-            '_meta': {
-                'page': page,
-                'per_page': per_page,
-                'total_pages': resources.pages,
-                'total_items': resources.total
-            },
-            '_links': {
-                'self': url_for(endpoint, page=page, per_page=per_page,
-                                **kwargs),
-                'next': url_for(endpoint, page=page + 1, per_page=per_page,
-                                **kwargs) if resources.has_next else None,
-                'prev': url_for(endpoint, page=page - 1, per_page=per_page,
-                                **kwargs) if resources.has_prev else None
-            }
-        }
-        return data
-
-
-class User(PaginatedAPIMixin, db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(255), index=True, unique=True, nullable=False)
     email = db.Column(db.String(255), index=True, unique=True, nullable=False)
@@ -41,7 +17,8 @@ class User(PaginatedAPIMixin, db.Model):
         self.username = username
         self.email = email
         self.password = bcrypt.generate_password_hash(
-            password, current_app.config['BCRYPT_LOG_ROUNDS']
+            password,
+            current_app.config['BCRYPT_LOG_ROUNDS']
         ).decode()
         self.registered_on = datetime.utcnow()
         self.admin = admin
