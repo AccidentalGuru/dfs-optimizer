@@ -14,6 +14,7 @@ class BaseTestCase(unittest.TestCase):
         self.app = create_app(TestConfig)
         self.app_context = self.app.app_context()
         self.app_context.push()
+        self.client = self.app.test_client()  # test client to make requests
         db.create_all()
 
     def tearDown(self):
