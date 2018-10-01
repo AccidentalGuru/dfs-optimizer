@@ -1,12 +1,44 @@
 from flask import make_response, request, jsonify
-from app import db
+from app import bcrypt, db
 from app.api import bp
 from app.models import User
 
 
 @bp.route('/login', methods=['POST'])
-def login(username, password):
-    pass
+def login():
+    post_data = request.get_json()
+
+    try:
+        if post_data.get('username'):
+            user = User.query.filter_by(username=post_data.get('username')).first()
+        else:
+            user = User.query.filter_by(email=post_data.get('email')).first()
+
+        if user and bcrypt.check_password_hash(user.password, post_data.get('password')):
+            auth_token = user.encode_auth_token(user.id)
+            if auth_token:
+                responseObject = {
+                    'status': 'success',
+                    'message': 'Successfully logged in.',
+                    'auth_token': auth_token.decode()
+                }
+
+                return make_response(jsonify(responseObject)), 200
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'User does not exist.'
+            }
+
+            return make_response(jsonify(responseObject)), 404
+    except Exception as e:
+        print(e)
+        responseObject = {
+            'status': 'fail',
+            'message': 'Try again'
+        }
+
+        return make_response(jsonify(responseObject)), 500
 
 
 @bp.route('/logout')
