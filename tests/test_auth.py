@@ -79,6 +79,26 @@ class TestAuthBluePrint(BaseTestCase):
         self.assertTrue(response.content_type == 'application/json')
         self.assertEqual(response.status_code, 404)
 
+    def test_user_status(self):
+        resp_register = self.client.post(
+            '/api/register',
+            data=json.dumps(dict(username='test', email='test@test.com', password='test')),
+            content_type='application/json'
+        )
+
+        response = self.client.get(
+            '/api/status',
+            headers=dict(
+                Authorization='Bearer ' + json.loads(resp_register.data.decode())['auth_token']
+            )
+        )
+
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['data'] is not None)
+        self.assertTrue(data['data']['email'] == 'test@test.com')
+        self.assertTrue(data['data']['admin'] is 'true' or 'false')
+        self.assertEqual(response.status_code, 200)
 
 
 if __name__=='__main__':
