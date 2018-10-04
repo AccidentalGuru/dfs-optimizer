@@ -50,7 +50,13 @@ class User(db.Model):
     def decode_auth_token(auth_token):
         try:
             payload = jwt.decode(auth_token, current_app.config['SECRET_KEY'])
-            return payload['sub']
+            is_blacklisted_token = BlacklistToken.check_blacklist(auth_token)
+
+            if is_blacklisted_token:
+                return 'Token blacklisted. Please log in again.'
+            else:
+                return payload['sub']
+
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
         except jwt.InvalidTokenError:
@@ -68,6 +74,15 @@ class BlacklistToken(db.Model):
 
     def __repr__(self):
         return '<Token: {}'.format(self.token)
+
+    @staticmethod
+    def check_blacklist(auth_token):
+        res = BlacklistToken.query.filter_by(token=str(auth_token)).first()
+        
+        if res:
+            return True
+        else:
+            return False
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
