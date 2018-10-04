@@ -38,7 +38,7 @@ def create_app(config_class=Config):
                 mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
                 fromaddr='no-reply@' + app.config['MAIL_SERVER'],
                 toaddrs=app.config['ADMINS'],
-                subject='Microblog Failure',
+                subject='Fantasy Football App Failure',
                 credentials=auth,
                 secure=secure
             )
@@ -62,7 +62,7 @@ def create_app(config_class=Config):
             app.logger.addHandler(file_handler)
 
         app.logger.setLevel(logging.INFO)
-        app.logger.info('Microblog startup')
+        app.logger.info('Fantasy Football App startup')
 
     return app
 
