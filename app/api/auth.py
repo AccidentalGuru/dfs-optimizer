@@ -1,7 +1,7 @@
 from flask import make_response, jsonify, request
 from app import bcrypt, db
 from app.api import bp
-from app.models import User
+from app.models import BlacklistToken, User
 
 
 @bp.route('/login', methods=['POST'])
@@ -41,15 +41,58 @@ def login():
         return make_response(jsonify(responseObject)), 500
 
 
-@bp.route('/logout')
+@bp.route('/logout', methods=['POST'])
 def logout():
-    pass
+    auth_header = request.headers.get('Authorization')
+
+    if auth_header:
+        auth_token = auth_header.split(' ')[1]
+    else:
+        auth_token = ''
+
+    if auth_token:
+        resp = User.decode_auth_token(auth_token)
+        if not isinstance(resp, str):
+
+            blacklist_token = BlacklistToken(token=auth_token)
+
+            try:
+                db.session.add(blacklist_token)
+                db.session.commit()
+                responseObject = {
+                    'status': 'success',
+                    'message': 'Successfully logged out.'
+                }
+
+                return make_response(jsonify(responseObject)), 200
+            except Exception as e:
+                responseObject = {
+                    'status': 'fail',
+                    'message': e
+                }
+
+                return make_response(jsonify(responseObject)), 200
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': resp
+            }
+
+            return make_response(jsonify(responseObject)), 401
+    else:
+        responseObject = {
+            'status': 'fail',
+            'message': 'Provide a valid auth token.'
+        }
+        return make_response(jsonify(responseObject)), 403
+
 
 
 @bp.route('/register', methods=['POST'])
 def register():
     post_data = request.get_json()
     user = User.query.filter_by(username=post_data.get('username')).first()
+
     if not user:
         user = User.query.filter_by(email=post_data.get('email')).first()
 
@@ -89,7 +132,7 @@ def register():
 
 
 @bp.route('/status', methods=['GET'])
-def get():
+def status():
     auth_header = request.headers.get('Authorization')
 
     if auth_header:

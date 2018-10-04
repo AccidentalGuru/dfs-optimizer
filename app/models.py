@@ -1,7 +1,7 @@
-from flask import current_app, url_for
-import jwt
 from datetime import datetime, timedelta
 import os
+from flask import current_app, url_for
+import jwt
 from app import bcrypt, db
 
 
@@ -56,6 +56,18 @@ class User(db.Model):
         except jwt.InvalidTokenError:
             return 'Invalid token. Please log in again.'
 
+
+class BlacklistToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    token = db.Column(db.String(500), unique=True, nullable=False)
+    blacklisted_on = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, token):
+        self.token = token
+        self.blacklisted_on = datetime.utcnow()
+
+    def __repr__(self):
+        return '<Token: {}'.format(self.token)
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
