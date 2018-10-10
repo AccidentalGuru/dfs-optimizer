@@ -1,3 +1,5 @@
-# fantasy-football-app
+# dfs-optimizer
 
-A web application project used to analyze fantasy football player data. Project built using Python, Flask, and React
+A web application project, built using Python, Flask, React and Webpack. 
+
+Used to optimize fantasy football lineups for daily contests hosted on draftkings and fanduel
