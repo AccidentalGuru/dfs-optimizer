@@ -1,7 +1,7 @@
 from sys import path
 import unittest
 from app import create_app, db
-from app.models import Player, Team, User
+from app.models import User
 
 app = create_app()
 path.append(path[0]) # add top level folder to path

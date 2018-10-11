@@ -1,7 +1,7 @@
 {
-  "name": "fantasy-football-app",
+  "name": "dfs-optimizer",
   "version": "1.0.0",
-  "description": "fantasy-football-app is a web application used to analyze fantasy football player data",
+  "description": "A web application project, used to optimize fantasy football lineups for daily contests hosted on draftkings and fanduel",
   "main": "index.js",
   "scripts": {
     "build": "webpack -p --progress --config webpack.config.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jmrojas2332/fantasy-football-app.git"
+    "url": "git+https://github.com/jmrojas2332/dfs-optimizer.git"
   },
   "author": "Jose Rojas",
   "license": "GPL",
   "bugs": {
-    "url": "https://github.com/jmrojas2332/fantasy-football-app/issues"
+    "url": "https://github.com/jmrojas2332/dfs-optimizer/issues"
   },
-  "homepage": "https://github.com/jmrojas2332/fantasy-football-app#readme",
+  "homepage": "https://github.com/jmrojas2332/dfs-optimizer#readme",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
