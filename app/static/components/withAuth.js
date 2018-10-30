@@ -9,7 +9,7 @@ export default function withAuth(AuthComponent) {
             super();
             this.state = {
                 user: null
-            }
+            };
         }
 
         componentWillMount() {
@@ -21,7 +21,7 @@ export default function withAuth(AuthComponent) {
                     const profile = Auth.getProfile();
                     this.setState({
                         user: profile
-                    })
+                    });
                 }
                 catch(err) {
                     Auth.logout();
@@ -40,5 +40,5 @@ export default function withAuth(AuthComponent) {
                 return null;
             }
         }
-    }
+    };
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import '../styles/App.css'
+import '../styles/App.css';
 import AuthService from './AuthService';
 import withAuth from './withAuth';
 const Auth = new AuthService();
@@ -7,7 +7,7 @@ const Auth = new AuthService();
 class App extends Component {
 
     handleLogout() {
-        Auth.logout()
+        Auth.logout();
         this.props.history.replace('/login');
     }
 

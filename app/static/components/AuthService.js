@@ -10,15 +10,15 @@ export default class AuthService {
     }
 
     login(username, password) {
-        // Get a token from api server using jquery
+        // Get a token from api server using the fetch api
         return this.fetch(`${this.domain}/api/login`, {
             method: 'POST',
-            data: {
+            body: JSON.stringify({
                 username: username,
                 password: password
-            }
+            })
         }).then(res => {
-            this.setToken(res.token) // Setting the token in localStorage
+            this.setToken(res.token);  // Setting the token in localStorage
             return Promise.resolve(res);
         });
     }
@@ -36,7 +36,7 @@ export default class AuthService {
                 return true;
             }
             else
-            return false;
+                return false;
         }
         catch (err) {
             return false;
@@ -69,21 +69,20 @@ export default class AuthService {
         const headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
-        }
+        };
 
         // Setting Authorization header
         // Authorization: Bearer xxxxxxx.xxxxxxxx.xxxxxx
         if (this.loggedIn()) {
-            headers['Authorization'] = 'Bearer ' + this.getToken()
+            headers['Authorization'] = 'Bearer ' + this.getToken();
         }
 
-        return $.ajax({
-            url: url,
-            method: options.method,
-            data: options.data
+        return fetch({
+            headers,
+            ...options
         })
-        .then(this._checkStatus)
-        .then(response => response.json());
+            .then(this._checkStatus)
+            .then(response => response.json());
     }
 
     _checkStatus(response) {
