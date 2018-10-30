@@ -107,3 +107,6 @@ node_modules/
 app.db
 data/
 logs/
+
+# tern project config
+.tern-project
