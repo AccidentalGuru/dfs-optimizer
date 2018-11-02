@@ -11,8 +11,7 @@ module.exports = {
         path: path.resolve('./app/static/'),
         filename: 'bundle.js',
     },
-    plugins: [
-    ],
+    plugins: [],
     module: {
         rules: [
             {
@@ -22,7 +21,8 @@ module.exports = {
                 loader: 'babel-loader',
                 query: {
                     //specify that we will be dealing with React code
-                    presets: ['react']
+                    presets: ['react'],
+                    plugins: ['transform-object-rest-spread']
                 }
             },
             {
