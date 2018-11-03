@@ -7,6 +7,7 @@ export default class AuthService {
         this.fetch = this.fetch.bind(this); // React binding stuff
         this.login = this.login.bind(this);
         this.getProfile = this.getProfile.bind(this);
+        this.register = this.register.bind(this);
     }
 
     login(username, password) {
