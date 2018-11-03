@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import '../styles/Login.css';
 import AuthService from './AuthService';
@@ -13,7 +12,7 @@ class Login extends Component {
 
     componentWillMount() {
         if (this.Auth.loggedIn()) {
-            this.props.history.replace('/');
+            this.props.history.replace('/register');
         }
     }
 
@@ -42,7 +41,7 @@ class Login extends Component {
             <div className="center">
                 <div className="card">
                     <h1>Login</h1>
-                    <form>
+                    <form onSubmit={this.handleFormSubmit}>
                         <input
                             className="form-item"
                             placeholder="Username goes here..."

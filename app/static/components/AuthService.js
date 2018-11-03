@@ -3,7 +3,7 @@ export default class AuthService {
 
     // Initializing important variables
     constructor(domain) {
-        this.domain = domain || 'http://localhost:5000'; // API server domain
+        this.domain = domain || 'http://127.0.0.1:5000'; // API server domain
         this.fetch = this.fetch.bind(this); // React binding stuff
         this.login = this.login.bind(this);
         this.getProfile = this.getProfile.bind(this);
@@ -14,11 +14,24 @@ export default class AuthService {
         return this.fetch(`${this.domain}/api/login`, {
             method: 'POST',
             body: JSON.stringify({
-                username: username,
-                password: password
+                username,
+                password
             })
         }).then(res => {
-            this.setToken(res.token);  // Setting the token in localStorage
+            this.setToken(res.auth_token);  // Setting the token in localStorage
+            return Promise.resolve(res);
+        });
+    }
+
+    register(email, username, password) {
+        return this.fetch(`${this.domain}/api/register`, {
+            method: 'POST',
+            body: JSON.stringify({
+                email,
+                username,
+                password
+            })
+        }).then(res => {
             return Promise.resolve(res);
         });
     }
@@ -77,7 +90,7 @@ export default class AuthService {
             headers['Authorization'] = 'Bearer ' + this.getToken();
         }
 
-        return fetch({
+        return fetch(url, {
             headers,
             ...options
         })

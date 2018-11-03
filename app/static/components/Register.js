@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../styles/Login.css';
 import AuthService from './AuthService';
 
-class Login extends Component {
+class Register extends Component {
     constructor() {
         super();
         this.handleChange = this.handleChange.bind(this);
@@ -27,9 +27,9 @@ class Login extends Component {
     handleFormSubmit(e) {
         e.preventDefault();
 
-        this.Auth.login(this.state.username, this.state.password)
+        this.Auth.register(this.state.email, this.state.username, this.state.password)
             .then(res => {
-                this.props.history.replace('/');
+                this.props.history.replace('/login');
             })
             .catch(err => {
                 alert(err);
@@ -40,8 +40,15 @@ class Login extends Component {
         return (
             <div className="center">
                 <div className="card">
-                    <h1>Login</h1>
-                    <form>
+                    <h1>Register</h1>
+                    <form onSubmit={this.handleFormSubmit}>
+                        <input
+                            className="form-item"
+                            placeholder="Email goes here..."
+                            name="email"
+                            type="text"
+                            onChange={this.handleChange}
+                        />
                         <input
                             className="form-item"
                             placeholder="Username goes here..."
@@ -68,4 +75,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default Register;
