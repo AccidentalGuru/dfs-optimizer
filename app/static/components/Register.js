@@ -8,6 +8,7 @@ class Register extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.Auth = new AuthService();
+        this.handleToLogin = this.handleToLogin.bind(this);
     }
 
     componentWillMount() {
@@ -36,41 +37,38 @@ class Register extends Component {
             });
     }
 
+    handleToLogin(e) {
+        this.props.history.replace('/login');
+    }
+
     render() {
         return (
-            <div className="center">
-                <div className="card">
-                    <h1>Register</h1>
-                    <form onSubmit={this.handleFormSubmit}>
-                        <input
-                            className="form-item"
-                            placeholder="Email goes here..."
-                            name="email"
-                            type="text"
-                            onChange={this.handleChange}
-                        />
-                        <input
-                            className="form-item"
-                            placeholder="Username goes here..."
-                            name="username"
-                            type="text"
-                            onChange={this.handleChange}
-                        />
-                        <input
-                            className="form-item"
-                            placeholder="Password goes here..."
-                            name="password"
-                            type="password"
-                            onChange={this.handleChange}
-                        />
-                        <input
-                            className="form-item"
-                            value="SUBMIT"
-                            type="submit"
-                        />
-                    </form>
-                </div>
-            </div>
+            <form className="form-signin" onSubmit={this.handleFormSubmit}>
+                <h1 className="h3 mb-3 font-weight-normal">Please register</h1>
+                <input
+                    className="form-control"
+                    placeholder="Email"
+                    name="email"
+                    type="email"
+                    onChange={this.handleChange}
+                />
+                <input
+                    className="form-control"
+                    placeholder="Username"
+                    name="username"
+                    type="text"
+                    onChange={this.handleChange}
+                />
+                <input
+                    className="form-control"
+                    placeholder="Password"
+                    name="password"
+                    type="password"
+                    onChange={this.handleChange}
+                />
+                <button className="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+                <a href="#" onClick={this.handleToLogin.bind(this)}>Back to login</a>
+            </form>
         );
     }
 }
