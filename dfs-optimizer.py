@@ -9,7 +9,7 @@ path.append(path[0]) # add top level folder to path
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User, 'Player': Player, 'Team': Team}
+    return {'db': db, 'User': User}
 
 
 @app.cli.command()
