@@ -82,3 +82,14 @@ class BlacklistToken(db.Model):
             return True
         else:
             return False
+
+
+class Player(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    rank = db.Column(db.Integer, nullable=False)
+    name = db.Column(db.String(32), nullable=False)
+    team = db.Column(db.String(3), nullable=False)
+    position = db.Column(db.String(2), nullable=False)
+    opponent = db.Column(db.String(4), nullable=False)
+    projection = db.Column(db.Float, nullable=False)
+    salary = db.Column(db.Integer, nullable=False)
