@@ -10,9 +10,9 @@ class App extends Component {
     render() {
         return (
             <div>
-                <NavBar />
+                // <NavBar />
                 <h2> Welcome {this.props.user.username}</h2>
-                <FileUpload />
+                // <FileUpload />
             </div>
         );
     }
