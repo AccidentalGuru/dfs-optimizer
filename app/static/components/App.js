@@ -9,7 +9,7 @@ const Auth = new AuthService();
 class App extends Component {
     render() {
         return (
-            <div class="text-center">
+            <div className="text-center">
                 <h2> Welcome {this.props.user.username}</h2>
             </div>
         );
