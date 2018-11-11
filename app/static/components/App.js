@@ -9,10 +9,8 @@ const Auth = new AuthService();
 class App extends Component {
     render() {
         return (
-            <div>
-                // <NavBar />
+            <div class="text-center">
                 <h2> Welcome {this.props.user.username}</h2>
-                // <FileUpload />
             </div>
         );
     }
