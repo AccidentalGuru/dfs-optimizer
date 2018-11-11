@@ -9,36 +9,43 @@ class FileUpload extends Component {
 
         this.state = {
             projectionsURL: '',
+            uploadStatus: false
         };
 
         this.handleUploadProjections = this.handleUploadProjections.bind(this);
+    }
+
+    componentWillMount() {
+        if (!Auth.loggedIn()) {
+            this.props.history.replace('/login');
+        }
     }
 
     handleUploadProjections(e) {
         e.preventDefault();
 
         const data = new FormData();
-        data.appened('file', this.uploadInput.files[0]);
-        data.append('filename', this.fileName.value);
+        data.append('file', this.uploadInput.files[0]);
 
         Auth.fetch(`${Auth.domain}/api/upload`, {
             method: 'POST',
+            headers: {'Authorization': 'Bearer ' + Auth.getToken()},
             body: data
         }).then(res => {
             res.json().then((body) => {
-                this.setState({ projectionsURL: `${Auth.domain}/${body.file}` });
+                this.setState({
+                    projectionsURL: `${Auth.domain}/${body.file}`,
+                    uploadStatus: true
+                });
             });
         });
     }
 
     render() {
         return (
-            <form onSubmit={this.handleUploadImage}>
+            <form onSubmit={this.handleUploadProjections}>
                 <div>
                     <input ref={(ref) => { this.uploadInput = ref; }} type="file" />
-                </div>
-                <div>
-                    <input ref={(ref) => { this.fileName = ref; }} type="text" placeholder="Enter the desired name of file" />
                 </div>
                 <br />
                 <div>
