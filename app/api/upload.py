@@ -2,9 +2,11 @@ from flask import make_response, jsonify, request
 from app.api import bp
 
 
+def is_csv(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'csv'
+
 @bp.route('/upload', methods=['POST'])
 def upload():
-    post_data = request.get_json()
     auth_header = request.headers.get('Authorization')
 
     if auth_header:
@@ -21,11 +23,38 @@ def upload():
         auth_token = ''
 
     if auth_token:
+        if 'file' not in request.files:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Request does not contain a file param.'
+            }
+
+            return make_response(jsonify(responseObject)), 400
+
+        file = request.files['file']
+
+        if file.filename == '':
+            responseObject = {
+                'status': 'fail',
+                'message': 'No file selected.'
+            }
+
+            return make_response(jsonify(responseObject)), 400
+
+        if not is_csv(file.filename):
+            responseObject = {
+                'status': 'fail',
+                'message': 'File is not a csv.'
+            }
+
+            return make_response(jsonify(responseObject)), 400
+
+        # save_file(file)
+        # read_data(file.read())
+
         responseObject = {
             'status': 'success',
-            'data': {
-                'file': '/projections.csv'
-            }
+            'message': 'File uploaded Successfully.'
         }
 
         return make_response(jsonify(responseObject)), 200
