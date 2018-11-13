@@ -10,7 +10,7 @@ class App extends Component {
     render() {
         return (
             <div className="text-center">
-                <h2> Welcome {this.props.user.username}</h2>
+                <h2>Welcome {this.props.user.username}</h2>
             </div>
         );
     }
