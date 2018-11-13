@@ -1,14 +1,19 @@
 import json
+import os
 import unittest
 from app import create_app, db
 from config import Config
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestConfig(Config):
     DEBUG = True
     TESTING = True
     BCRYPT_LOG_ROUNDS = 4
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_TEST_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'test.db')
+
 
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
