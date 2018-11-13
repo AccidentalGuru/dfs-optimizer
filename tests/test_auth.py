@@ -3,46 +3,7 @@ import time
 import unittest
 from app import db
 from app.models import BlacklistToken, User
-from base import BaseTestCase
-
-
-def register_user(self, username, email, password):
-    return self.client.post(
-        '/api/register',
-        data=json.dumps(dict(
-            username=username,
-            email=email,
-            password=password)),
-        content_type='application/json'
-    )
-
-
-def login_user(self, username, password):
-    return self.client.post(
-        '/api/login',
-        data=json.dumps(dict(
-            username=username,
-            password=password)),
-        content_type='application/json'
-    )
-
-
-def logout_user(self, token):
-    return self.client.post(
-        '/api/logout',
-        headers=dict(
-            Authorization='Bearer ' + token
-        )
-    )
-
-
-def get_user_status(self, token):
-    return self.client.get(
-        '/api/status',
-        headers=dict(
-            Authorization='Bearer ' + token
-        )
-    )
+from base import BaseTestCase, get_user_status, login_user, logout_user, register_user
 
 
 class TestAuthBluePrint(BaseTestCase):
