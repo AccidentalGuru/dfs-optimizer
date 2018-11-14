@@ -103,10 +103,10 @@ ENV/
 # node modules
 node_modules/
 
-# exclude dev database, excel data and logs
+# exclude dev database, logs and uploads
 app.db
-data/
 logs/
+uploads/
 
 # tern project config
 .tern-project

@@ -1,9 +1,16 @@
+import os
 from flask import make_response, jsonify, request
+from app import db
 from app.api import bp
+from app.models import File, User
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = set(['csv'])
 
 
 def is_csv(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'csv'
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @bp.route('/upload', methods=['POST'])
 def upload():
@@ -49,8 +56,17 @@ def upload():
 
             return make_response(jsonify(responseObject)), 400
 
-        # save_file(file)
-        # read_data(file.read())
+        user_id = User.decode_auth_token(auth_token)
+        filename = secure_filename(file.filename)
+        print(filename)
+        file.save(os.path.join(UPLOAD_FOLDER, filename))  # save to uploads folder
+        file = File(
+            filename=filename,
+            user_id=user_id
+        )
+
+        db.session.add(file)
+        db.session.commit()
 
         responseObject = {
             'status': 'success',

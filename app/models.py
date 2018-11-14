@@ -93,3 +93,10 @@ class Player(db.Model):
     opponent = db.Column(db.String(4), nullable=False)
     projection = db.Column(db.Float, nullable=False)
     salary = db.Column(db.Integer, nullable=False)
+
+
+class File(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    filename = db.Column(db.String(64), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
