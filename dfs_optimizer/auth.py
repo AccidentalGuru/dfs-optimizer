@@ -1,7 +1,8 @@
-from flask import make_response, jsonify, request
-from app import bcrypt, db
-from app.api import bp
-from app.models import BlacklistToken, User
+from flask import Blueprint, make_response, jsonify, request
+from dfs_optimizer import bcrypt, db
+from dfs_optimizer.models import BlacklistToken, User
+
+bp = Blueprint('auth', __name__)
 
 
 @bp.route('/login', methods=['POST'])
@@ -118,7 +119,7 @@ def register():
         except Exception as e:
             responseObject = {
                 'status': 'fail',
-                'message': 'Some error occurred. Please try again.'
+                'message': e
             }
 
             return make_response(jsonify(responseObject)), 401

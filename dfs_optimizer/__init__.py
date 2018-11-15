@@ -1,15 +1,16 @@
+import os
+import logging
+from logging.handlers import RotatingFileHandler, SMTPHandler
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-import logging
-import os
-from logging.handlers import RotatingFileHandler, SMTPHandler
 from config import Config
 
 db = SQLAlchemy()
 migrate = Migrate()
 bcrypt = Bcrypt()
+
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -19,12 +20,11 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     bcrypt.init_app(app)
 
-    from app.api import bp as api_bp
-    app.register_blueprint(api_bp, url_prefix='/api')
-
-    from app.main import bp as main_bp
-    app.register_blueprint(main_bp)
-
+    from dfs_optimizer import auth, routes, upload
+    app.register_blueprint(auth.bp, url_prefix='/api')
+    app.register_blueprint(upload.bp, url_prefix='/api')
+    app.register_blueprint(routes.bp)
+    
     if not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:
             auth = None
@@ -65,5 +65,3 @@ def create_app(config_class=Config):
         app.logger.info('DFS Optimizer startup')
 
     return app
-
-from app import models

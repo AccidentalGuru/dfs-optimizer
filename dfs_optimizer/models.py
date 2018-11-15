@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from flask import current_app
 import jwt
-from app import bcrypt, db
+from dfs_optimizer import bcrypt, db
 
 
 class User(db.Model):

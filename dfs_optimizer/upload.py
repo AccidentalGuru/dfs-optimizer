@@ -1,16 +1,17 @@
 import os
-from flask import make_response, jsonify, request
-from app import db
-from app.api import bp
-from app.models import File, User
+from flask import Blueprint, make_response, jsonify, request
 from werkzeug.utils import secure_filename
+from dfs_optimizer import db
+from dfs_optimizer.models import File, User
 
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = set(['csv'])
+bp = Blueprint('upload', __name__)
 
 
 def is_csv(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @bp.route('/upload', methods=['POST'])
 def upload():

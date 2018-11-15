@@ -1,8 +1,7 @@
 import unittest
-from app import db
-from app.models import User
 from base import BaseTestCase
-from config import Config
+from dfs_optimizer import db
+from dfs_optimizer.models import User
 
 
 class TestUserModel(BaseTestCase):

@@ -1,8 +1,8 @@
 import json
 import os
 import unittest
-from app import create_app, db
 from config import Config
+from dfs_optimizer import create_app, db
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
