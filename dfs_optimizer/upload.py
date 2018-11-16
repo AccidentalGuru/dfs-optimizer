@@ -1,8 +1,9 @@
+import csv
 import os
 from flask import Blueprint, make_response, jsonify, request
 from werkzeug.utils import secure_filename
 from dfs_optimizer import db
-from dfs_optimizer.models import File, User
+from dfs_optimizer.models import File, Player, User
 
 UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = set(['csv'])
@@ -60,7 +61,8 @@ def upload():
         user_id = User.decode_auth_token(auth_token)
         filename = secure_filename(file.filename)
         print(filename)
-        file.save(os.path.join(UPLOAD_FOLDER, filename))  # save to uploads folder
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(file_path)  # save to uploads folder
         file = File(
             filename=filename,
             user_id=user_id
@@ -68,7 +70,7 @@ def upload():
 
         db.session.add(file)
         db.session.commit()
-
+        read_file_data(file_path)
         responseObject = {
             'status': 'success',
             'message': 'File uploaded Successfully.'
@@ -82,3 +84,30 @@ def upload():
         }
 
         return make_response(jsonify(responseObject)), 401
+
+
+def read_file_data(file_path):
+    with open(file_path, encoding='utf-8-sig') as file:
+        reader = csv.DictReader(file)
+
+        for row in reader:
+            rank = int(row['Rnk'])
+            name = row['Name']
+            team = row['Team']
+            pos = row['Pos']
+            opp = row['Game']
+            points = float(row['Pts'])
+            salary = int(row['Sal'][1:]) if row['Sal'] != 'N/A' else 0
+
+            player = Player(
+                rank=rank,
+                name=name,
+                team=team,
+                position=pos,
+                opponent=opp,
+                projection=points,
+                salary=salary
+            )
+
+            db.session.add(player)
+        db.session.commit()
