@@ -60,7 +60,6 @@ def upload():
 
         user_id = User.decode_auth_token(auth_token)
         filename = secure_filename(file.filename)
-        print(filename)
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(file_path)  # save to uploads folder
         file = File(
