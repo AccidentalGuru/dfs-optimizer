@@ -14,7 +14,7 @@ bcrypt = Bcrypt()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(config_class)
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -24,7 +24,7 @@ def create_app(config_class=Config):
     app.register_blueprint(auth.bp, url_prefix='/api')
     app.register_blueprint(upload.bp, url_prefix='/api')
     app.register_blueprint(routes.bp)
-    
+
     if not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:
             auth = None

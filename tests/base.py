@@ -11,8 +11,7 @@ class TestConfig(Config):
     DEBUG = True
     TESTING = True
     BCRYPT_LOG_ROUNDS = 4
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_TEST_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'test.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
 
 class BaseTestCase(unittest.TestCase):
